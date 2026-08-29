@@ -2,26 +2,30 @@
 <html>
 <head>
   <title>AlexGPT</title>
+
+  <script src="https://js.puter.com/v2/"></script>
+
   <style>
     body {
       margin: 0;
       background: #212121;
       color: white;
       font-family: Arial;
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      height: 100vh;
     }
 
     h1 {
-      padding: 20px;
       margin: 0;
+      padding: 20px;
       background: #171717;
     }
 
     #chat {
       flex: 1;
       padding: 20px;
+      overflow-y: auto;
     }
 
     .input {
@@ -35,6 +39,7 @@
       padding: 15px;
       border-radius: 10px;
       border: none;
+      font-size: 16px;
     }
 
     button {
@@ -48,27 +53,41 @@
 </head>
 
 <body>
-  <h1>🤖 AlexGPT</h1>
 
-  <div id="chat">
-    <p>Hi! I'm AlexGPT. 👋</p>
-  </div>
+<h1>🤖 AlexGPT</h1>
 
-  <div class="input">
-    <input id="message" placeholder="Message AlexGPT..." />
-    <button onclick="send()">Send</button>
-  </div>
+<div id="chat">
+  <p><b>AlexGPT:</b> Hi! Ask me anything! 👋</p>
+</div>
 
-  <script>
-    function send() {
-      const box = document.getElementById("message");
-      const chat = document.getElementById("chat");
+<div class="input">
+  <input id="message" placeholder="Message AlexGPT..." />
+  <button onclick="sendMessage()">Send</button>
+</div>
 
-      if (box.value.trim() !== "") {
-        chat.innerHTML += "<p>You: " + box.value + "</p>";
-        box.value = "";
-      }
-    }
-  </script>
+<script>
+async function sendMessage() {
+  const input = document.getElementById("message");
+  const chat = document.getElementById("chat");
+  const message = input.value.trim();
+
+  if (!message) return;
+
+  chat.innerHTML += `<p><b>You:</b> ${message}</p>`;
+  input.value = "";
+
+  chat.innerHTML += `<p id="thinking"><b>AlexGPT:</b> Thinking... 🤔</p>`;
+
+  try {
+    const response = await puter.ai.chat(message);
+    document.getElementById("thinking").innerHTML =
+      "<b>AlexGPT:</b> " + response.message.content;
+  } catch (error) {
+    document.getElementById("thinking").innerHTML =
+      "<b>AlexGPT:</b> Sorry, something went wrong.";
+  }
+}
+</script>
+
 </body>
 </html>
