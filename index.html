@@ -1,17 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AlexGPT</title>
+
+  <script src="https://js.puter.com/v2/"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #212121;
+      color: white;
+      font-family: Arial;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 20px;
+      background: #171717;
+    }
+
+    #chat {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .input {
+      display: flex;
+      padding: 15px;
+      background: #171717;
+    }
+
+    input {
+      flex: 1;
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🤖 AlexGPT</h1>
+
+<div id="chat">
+  <p><b>AlexGPT:</b> Hi! Ask me anything! 👋</p>
+</div>
+
+<div class="input">
+  <input id="message" placeholder="Message AlexGPT..." />
+  <button onclick="sendMessage()">Send</button>
+</div>
+
 <script>
-let messages = JSON.parse(localStorage.getItem("alexgpt_memory")) || [];
-
-function showMessages() {
-  const chat = document.getElementById("chat");
-  chat.innerHTML = "";
-
-  messages.forEach(m => {
-    chat.innerHTML += `<p><b>${m.role === "user" ? "You" : "AlexGPT"}:</b> ${m.content}</p>`;
-  });
-
-  chat.scrollTop = chat.scrollHeight;
-}
-
 async function sendMessage() {
   const input = document.getElementById("message");
   const chat = document.getElementById("chat");
@@ -19,34 +73,21 @@ async function sendMessage() {
 
   if (!message) return;
 
-  messages.push({
-    role: "user",
-    content: message
-  });
-
+  chat.innerHTML += `<p><b>You:</b> ${message}</p>`;
   input.value = "";
-  showMessages();
 
   chat.innerHTML += `<p id="thinking"><b>AlexGPT:</b> Thinking... 🤔</p>`;
 
   try {
-    const response = await puter.ai.chat(messages);
-
-    const answer = response.message.content;
-
-    messages.push({
-      role: "assistant",
-      content: answer
-    });
-
-    localStorage.setItem("alexgpt_memory", JSON.stringify(messages));
-
-    showMessages();
-
+    const response = await puter.ai.chat(message);
+    document.getElementById("thinking").innerHTML =
+      "<b>AlexGPT:</b> " + response.message.content;
   } catch (error) {
-    chat.innerHTML += `<p><b>AlexGPT:</b> Sorry, something went wrong.</p>`;
+    document.getElementById("thinking").innerHTML =
+      "<b>AlexGPT:</b> Sorry, something went wrong.";
   }
 }
-
-showMessages();
 </script>
+
+</body>
+</html>
